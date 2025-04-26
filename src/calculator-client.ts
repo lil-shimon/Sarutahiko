@@ -1,14 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { spawn } from "child_process";
 
 async function main() {
-  // サーバープロセスを起動
-  const serverProcess = spawn("node", ["dist/calculator-server.js"], {
-    stdio: ["pipe", "pipe", "inherit"],
-  });
-
-  // プロセスの標準出力と標準入力をクライアントのトランスポートに接続
+  // クライアントトランスポートを作成（これが自動的にサーバープロセスを起動します）
   const transport = new StdioClientTransport({
     command: "node",
     args: ["dist/calculator-server.js"],
@@ -25,8 +19,8 @@ async function main() {
     console.log("サーバーに接続しました");
 
     // 利用可能なツールを取得
-    const tools = await client.listTools();
-    console.log("利用可能なツール:", tools);
+    const toolsResult = await client.listTools();
+    console.log("利用可能なツール:", toolsResult.tools);
 
     // 計算テスト
     const addResult = await client.callTool({
